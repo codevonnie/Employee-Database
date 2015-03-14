@@ -1,1 +1,5 @@
-1 Boobs McGee 
+1 Bruce Wayne 123 Gotham Towers Security 19 08 2001 50000 batty@work.ie
+2 Clark Kent 52 Kryptonite Street Finace 19 08 2001 67000 manofsteel@work.ie
+3 Selina Kyle 12 Cat Way Inventory 19 08 2001 mieow@work.ie
+4 Steven Rogers 1000 America Falls Advertising 19 08 2001 captamer@work.ie
+5 Tony Stark 11 Iron Lane Public Relations 19 08 2001 ironknight@work.ie
