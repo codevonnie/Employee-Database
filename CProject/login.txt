@@ -1,0 +1,3 @@
+guest passwd
+joebloggs 123456
+janedoe mypass
