@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <string.h>
+#include <ctype.h>
 
 #define LOGFILE "login.txt"
 #define EMPFILE "employee.txt"
@@ -18,10 +19,10 @@ typedef struct login
 	char password[6];
 }LOG;
 
-struct node 
+struct lNode 
 {
 	LOG login;
-	struct node *next;
+	struct lNode *next;
 };
 
 typedef struct date
@@ -31,18 +32,6 @@ typedef struct date
 	int year;
 }DATE;
 
-/*typedef struct employeeName{
-	 
-	char empFirst[15];
-	char empLast[15];
-}NAME;*/
-
-/*typedef struct employeeAddress{
-
-	int num;
-	char fAddress[20];
-	char sAddress[20];
-}ADDRESS;*/
 
 typedef struct employee{
 
@@ -56,30 +45,28 @@ typedef struct employee{
 
 }EMP;
    
-struct eNode 
+struct node 
 {
 	EMP employee;
-	struct eNode *next;
+	struct node *next;
 };
-
+struct lNode *lhead;
+struct lNode *lsecond;
+struct lNode *lthird;
 char __username[15];
 char __password[6];
-struct node *lhead;
-struct node *lsecond;
-struct node *lthird;
 FILE *logPtr;
 FILE *empPtr;
 	
 void readInLogin();
 void loginSystem();
 void searchLogin();
-void readInEmployees(struct eNode **head);
-void addEmpNode();
+void readInEmployees(struct node **head);
 int showMenu();
-void addEmployee();
-void displayEmployee();
+void addEmployee(struct node **head);
+void displayEmployee(struct node *head);
 void updateEmployee();
 void deleteEmployee();
 void displayByDept();
 void employeeReport();
-
+void displayList(struct node *head);
