@@ -6,15 +6,16 @@
 
 main(){
 
-	lhead=(struct node*)malloc(sizeof(struct node));
-	lsecond=(struct node*)malloc(sizeof(struct node));
-	lthird=(struct node*)malloc(sizeof(struct node));
-
-	ehead=(struct employee*)malloc(sizeof(struct employee));
+	struct eNode *head=(struct eNode*)malloc(sizeof(struct eNode));
+	head->next=NULL;
+	readInEmployees(&head);
 	
-	//readInLogin();
+
+	/*
+	
+	readInLogin();
 	readInEmployees();
-		
+	*/
 	system("pause");
 
 }//end main

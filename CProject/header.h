@@ -5,6 +5,7 @@
 
 #define LOGFILE "login.txt"
 #define EMPFILE "employee.txt"
+#define MAXNUM 80
 
 typedef int boolean;
 #define true 1
@@ -30,6 +31,19 @@ typedef struct date
 	int year;
 }DATE;
 
+/*typedef struct employeeName{
+	 
+	char empFirst[15];
+	char empLast[15];
+}NAME;*/
+
+/*typedef struct employeeAddress{
+
+	int num;
+	char fAddress[20];
+	char sAddress[20];
+}ADDRESS;*/
+
 typedef struct employee{
 
 	int employeeId;
@@ -38,14 +52,14 @@ typedef struct employee{
 	char department[15];
 	DATE joined;
 	float salary;
-	char email[30];
+	char email[20];
 
 }EMP;
    
 struct eNode 
 {
-	EMP emp;
-	struct node *next;
+	EMP employee;
+	struct eNode *next;
 };
 
 char __username[15];
@@ -53,14 +67,14 @@ char __password[6];
 struct node *lhead;
 struct node *lsecond;
 struct node *lthird;
-struct employee *ehead;
 FILE *logPtr;
 FILE *empPtr;
 	
 void readInLogin();
 void loginSystem();
 void searchLogin();
-void readInEmployees();
+void readInEmployees(struct eNode **head);
+void addEmpNode();
 int showMenu();
 void addEmployee();
 void displayEmployee();

@@ -9,6 +9,9 @@ void readInLogin(){
 
 	else
 	{
+		lhead=(struct node*)malloc(sizeof(struct node));
+		lsecond=(struct node*)malloc(sizeof(struct node));
+		lthird=(struct node*)malloc(sizeof(struct node));
 		fscanf(logPtr, "%s", lhead->login.username);
 		fscanf(logPtr, "%s", lhead->login.password);
 		
@@ -21,6 +24,7 @@ void readInLogin(){
 		lsecond->next=lthird;
 		lthird->next=NULL;
 	}
+	fclose(logPtr);
 	loginSystem();
 
 }//readInLogin
@@ -67,22 +71,47 @@ void loginSystem(){
 
 }
 
-void readInEmployees(){
+void readInEmployees(struct eNode *head){
 
-	if((empPtr = fopen(EMPFILE, "r")) == NULL)
+	if((empPtr = fopen(EMPFILE, "rb")) == NULL)
 	{
 		puts("File could not be opened");
 	}
 
 	else{
-		fscanf(empPtr, "%4d %30c %40c %15c %2d %2d %4d %6lf %30c", &ehead->employeeId, ehead->employeeName,
-				ehead->employeeAddress, ehead->department, &ehead->joined.day, &ehead->joined.month, &ehead->joined.year,
-				&ehead->salary, ehead->email);
-	
-		printf("stuff below\n");
-		printf("empid: %d \n", ehead->employeeId);
-		system("pause");
+		
+
+		char data[MAXNUM];
+		while(fgets(data, sizeof data, empPtr))
+		{
+			if(sscanf(data, "%d %[^\,], %[^\,], %[^\,], %d %d %d %f %s", &head->employee.employeeId, head->employee.employeeName, head->employee.employeeAddress, 
+				head->employee.department, &head->employee.joined.day, &head->employee.joined.month, &head->employee.joined.year, &head->employee.salary, head->employee.email))
+				{
+				
+				addEmpNode();
+				printf("%d %s %s %s %d/%d/%d %.2f %s \n\n", 
+					head->employee.employeeId, head->employee.employeeName, head->employee.employeeAddress, head->employee.department, head->employee.joined.day,
+					head->employee.joined.month, head->employee.joined.year, head->employee.salary, head->employee.email); 
+				}//if
+ 		}//while
 	}
+}
+
+void addEmpNode(){
+
+	struct eNode *temp=(struct eNode*)malloc(sizeof(struct eNode));
+	struct eNode *newEmp=(struct eNode*)malloc(sizeof(struct eNode));
+	temp=head;
+
+	while(temp->next != NULL) // go to the last node
+	{
+		temp = temp->next;
+	}
+	
+	newEmp->next=NULL;
+	temp->next=newEmp; 
+
+
 }
 
 void searchLogin()
@@ -100,46 +129,46 @@ void searchLogin()
 
 		if((compName==0)&&(compPass==0))
 		{
+			free(lhead);
 			readInEmployees();
 			while(iChoice!=7){
 				switch(iChoice = showMenu())
 				{
 					case 1:
-						{
+					{
 							addEmployee();
-
 							break;
-						}//case1
+					}//case1
 					case 2:
-						{
-									displayEmployee();
-									break;
-						}//case2
+					{
+							displayEmployee();
+							break;
+					}//case2
 					case 3:
-								{
-									updateEmployee();
-									break;
-								}//case3
+					{
+							updateEmployee();
+							break;
+					}//case3
 					case 4:
-								{
-									deleteEmployee();
-									break;
-								}//case4
+					{
+							deleteEmployee();
+							break;
+					}//case4
 					case 5:
-								{
-									displayByDept();
-									break;
-								}//case5
+					{
+							displayByDept();
+							break;
+					}//case5
 					case 6:
-								{
-									employeeReport();
-									break;
-								}//case6
+					{
+							employeeReport();
+							break;
+					}//case6
 					case 7:
-								{
-									exit(0);
-								}//case7
-					}//switch
+					{
+							exit(0);
+					}//case7
+				}//switch
 			}//inner while
 		}//if 
 		temp = temp->next;
