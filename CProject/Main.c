@@ -23,17 +23,26 @@ main(){
 			
 			case 2:
 			{
-				displayEmployee(&head); //display a chosen employees details
+				count=findEmployee(head); //find if employee exists
+				if(count>=0){ //if employee exists (if count is equal or greater than 0)
+					displayEmployee(head, count); //call display method
+				}
 				break;
 			}//case2
 			case 3:
 			{
-				displayEmployee(&head);
+				count=findEmployee(head);
+				if(count>=0){
+					updateEmployee(&head, count);
+				}
 				break;
 			}//case3
 			case 4:
 			{
-				deleteEmployee(); //delete a chosen employee
+				count=findEmployee(head);
+				if(count>=0){
+					deleteEmployee(&head, count); //delete a chosen employee
+				}
 				break;
 			}//case4
 			case 5:

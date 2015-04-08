@@ -200,7 +200,7 @@ void addEmployee(struct node** head){ //add employee to linkedlist
 
 }//end addEmployee()
 
-void displayEmployee(struct node *head){
+int findEmployee(struct node *head){
 
 	char empDetails[30], choice; //employee details to be stored in array
 	int compName, empID, count=0;
@@ -216,33 +216,136 @@ void displayEmployee(struct node *head){
 		compName=strcmp(temp->employee.employeeName, empDetails); //compare employee name with details added by user
 
 		if((compName==0)||(temp->employee.employeeId==empID)){ //if string compare results in 0 or if the id in the current node is equal to user input, print out details
-			printf("%d\n %s\n %s\n %s\n %d/%d/%d\n %.2f\n %s \n\n", temp->employee.employeeId, temp->employee.employeeName, temp->employee.employeeAddress,
-					temp->employee.department, temp->employee.joined.day, temp->employee.joined.month, temp->employee.joined.year,
-						temp->employee.salary, temp->employee.email); 
+			
 				__check=true; //change boolean check to true
+				return count;
 		}
 		else{ //if value not found go to next value in linkedlist
 			temp=temp->next;
 		}
+		count++;
 	}
 
 	if(__check==false){ //if after search check is still false tell the user the employee could not be found
 
-		printf("Employee could not be found");
+		printf("\n\n\t\t********Employee could not be found********\n\n");
+		count=-1;
 	}
+	system("pause");
+	return count;
 	
-}//displayEmployee()
+}//findEmployee()
 
-void updateEmployee(struct node **head){
+void displayEmployee(struct node *head, int count){ //display employee details if employee was found in previous method
 
 	struct node *temp=(struct node*)malloc(sizeof(struct node));
-	temp=head;
+	int i;
+	temp=head; //temp takes values of head
 
+	for(i=0; i<count;i++){ //loop goes to the node that was found to contain employee in prev method
+		temp=temp->next;
+	}
+	//print out emp details to user
+	printf("%d\n %s\n %s\n %s\n %d/%d/%d\n %.2f\n %s \n\n", temp->employee.employeeId, temp->employee.employeeName, temp->employee.employeeAddress,
+	temp->employee.department, temp->employee.joined.day, temp->employee.joined.month, temp->employee.joined.year,
+	temp->employee.salary, temp->employee.email);
+		
+	system("pause");
 
+}//end displayEmployee
+
+void updateEmployee(struct node **head, int count){ //update employee as selected by user using count from findEmployee method
+
+	struct node *temp=(struct node*)malloc(sizeof(struct node));
+	int i;
+	char choice=' ';
+	__check=false;
+	temp=*head; //temp gets pointer address for head of linkedlist
+
+	for(i=0; i<count;i++){//loop goes to the node that was found to contain employee in prev method
+		temp=temp->next;
+	}
 	
-}
+	while(__check==false){ //while check is false continue looping
 
-void deleteEmployee(){}
+		//print out selected employee
+		printf("%d\n %s\n %s\n %s\n %d/%d/%d\n %.2f\n %s \n\n", temp->employee.employeeId, temp->employee.employeeName, temp->employee.employeeAddress,
+		temp->employee.department, temp->employee.joined.day, temp->employee.joined.month, temp->employee.joined.year,
+		temp->employee.salary, temp->employee.email);
+		
+		printf("Do you wish to change employee Address, Department or Salary? (e to exit)");
+		scanf(" %c", &choice); //get user to input which detail they wish to change or e to exit
+		fflush(stdin); //flush buffer
+
+		switch(choice)//using user choice
+		{
+			case 'a':
+			case 'A': //upper or lowercase A for address
+				{
+						printf("Please enter amended address: ");
+						scanf("%40[^\n]s", &temp->employee.employeeAddress); //get input of amended address and overwrite previous employee address in node
+						__check=true; //set check to true
+						break; //break from switch
+				}
+			case 'd':
+			case 'D': //upper or lowercase D for department
+				{	
+						printf("Please enter amended department: ");
+						scanf("%15[^\n]s", &temp->employee.department); //get input of amended department and overwrite previous employee department in node
+						__check=true; //set check to true
+						break; //break from switch
+				}
+			case 's':
+			case 'S':
+				{
+						printf("Please enter emended salary: ");
+						scanf("%f", &temp->employee.salary); //get input of amended salary and overwrite previous employee salary in node
+						__check=true; //set check to true
+						break; //break from switch
+				}
+			case 'e':
+			case 'E':
+				{
+						return; //exit method if user enters upper or lowercase E
+				}
+			default:
+				{		//tell the user if they input an invalid entry and loop back over the while loop
+						printf("\n\n\t\t********Sorry that is not a valid option********\n\n");
+					
+				}
+
+		}//end switch
+	}//end while
+	printf("Employee details updated successfully\n\n"); //confirm that the user has amended the details
+	system("pause");
+}//updateEmployee
+
+void deleteEmployee(struct node **head, int count){ //delete employee inputted by user and found in findEmployee method
+
+	struct node *temp1=(struct node*)malloc(sizeof(struct node)); 
+	struct node *temp2=(struct node*)malloc(sizeof(struct node)); 
+	int i;
+	temp1 = *head; //temp1 gets address of head of linkedlist
+	if(count==0){ //if the node to be deleted is at the start of the linkedlist use this code
+		*head=temp1->next; //head points to the value pointed to by temp1
+		free(temp1); //temp1 is freed from memory
+		printf("Employee deleted\n\n"); //confirm to user that employee has been deleted
+		system("pause");
+		return; //exit method
+	}
+	 
+	for(i=0; i<count-1;i++){ //if it is not the first node that is required use loop to get to the node before the node to be deleted
+		temp1=temp1->next;
+	}
+
+	temp2=temp1->next; //temp2 takes value of the node for deletion
+	temp1->next=temp2->next; //temp1 now points to what temp2 used to point to
+	free(temp2); //temp2 is freed from memory
+
+	printf("Employee deleted\n\n");//confirm to user that employee has been deleted
+	system("pause");
+
+}//deleteEmployee
 
 void displayByDept(){}
 
