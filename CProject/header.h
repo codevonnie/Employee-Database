@@ -6,7 +6,8 @@
 
 #define LOGFILE "login.txt"
 #define EMPFILE "employee.txt"
-#define MAXNUM 80
+#define MAXNUM 85
+#define EOL '\n'
 
 typedef int boolean;
 #define true 1
@@ -50,9 +51,7 @@ struct node
 	EMP employee;
 	struct node *next;
 };
-struct lNode *lhead;
-struct lNode *lsecond;
-struct lNode *lthird;
+
 char __username[15];
 char __password[6];
 FILE *logPtr;
@@ -60,8 +59,8 @@ FILE *empPtr;
 	
 void readInLogin();
 void loginSystem();
-void searchLogin();
-void readInEmployees(struct node **head);
+void searchLogin(struct lNode **lHead);
+struct node readInEmployees(struct node **head);
 int showMenu();
 void addEmployee(struct node **head);
 void displayEmployee(struct node *head);

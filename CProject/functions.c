@@ -1,31 +1,38 @@
 #include "header.h"
 
-void readInLogin(){
+void readInLogin(){ //reads in the login credentials from the login file
 
-	if((logPtr = fopen(LOGFILE, "r")) == NULL)
+	
+	struct lNode *lHead; //create head for login linkedlist
+
+	if((logPtr = fopen(LOGFILE, "r")) == NULL) //if the file cannot be opened alert the user
 	{
 		puts("File could not be opened");
 	}
 
 	else
 	{
-		lhead=(struct lNode*)malloc(sizeof(struct lNode));
-		lsecond=(struct lNode*)malloc(sizeof(struct lNode));
-		lthird=(struct lNode*)malloc(sizeof(struct lNode));
-		fscanf(logPtr, "%s", lhead->login.username);
-		fscanf(logPtr, "%s", lhead->login.password);
+		//create linkedlist to hold the login credentials from file
+		struct lNode *lSecond;
+		struct lNode *lThird;
+		lHead=(struct lNode*)malloc(sizeof(struct lNode));
+		lSecond=(struct lNode*)malloc(sizeof(struct lNode));
+		lThird=(struct lNode*)malloc(sizeof(struct lNode));
+		fscanf(logPtr, "%s", lHead->login.username);
+		fscanf(logPtr, "%s", lHead->login.password);
 		
-		fscanf(logPtr, "%s", lsecond->login.username);
-		fscanf(logPtr, "%s", lsecond->login.password);
-		lhead->next=lsecond;
+		fscanf(logPtr, "%s", lSecond->login.username);
+		fscanf(logPtr, "%s", lSecond->login.password);
+		lHead->next=lSecond;
 		
-		fscanf(logPtr, "%s", lthird->login.username);
-		fscanf(logPtr, "%s", lthird->login.password);
-		lsecond->next=lthird;
-		lthird->next=NULL;
+		fscanf(logPtr, "%s", lThird->login.username);
+		fscanf(logPtr, "%s", lThird->login.password);
+		lSecond->next=lThird;
+		lThird->next=NULL;
 	}
 	fclose(logPtr);
-	loginSystem();
+	loginSystem(); //call to loginSystem to print astericks to the screen instead of the password
+	searchLogin(lHead); //pass head node to search for the inputed credentials in the saved credentials
 
 }//readInLogin
 
@@ -35,98 +42,101 @@ void loginSystem(){
 	int counter=0, i = 0;
 	__check= false;
 	
-	fflush(stdin);
-	printf("Enter username: ");
-	scanf("%s", __username);
+	fflush(stdin); //flush the standard input
+	printf("Enter username: "); 
+	scanf("%s", __username); //read in username from user
 	printf("**Press Esc to exit**\n");
-	printf("Enter password: ");
+	printf("Enter password: "); 
 	//Hide password by replacing letters with *
-	while (__check == false){
-		c=_getch();
+	while (__check == false){ //if boolean value check is false...
+		c=_getch(); //read in first char
 		
 		//Esc to exit
-		if(c == 27){
+		if(c == 27){ //27 is ascii for the ESC key and will allow the user to exit the system
 
 			exit(0);
 		}
 		//Ascii for all allowed charecters 
-		else if ((c > 47 && c < 58) || (c>64 && c < 123)){
-			__password[i] = c;
-			i++;
-			printf("*");
+		else if ((c > 47 && c < 58) || (c>64 && c < 123)){ //if c is a numeric char or an upper/lowercase letter...
+			__password[i] = c; //...position i of the password array is equal to c
+			i++; //i is incremented
+			printf("*"); //print an asterisk
 		}
 		//Allow for character deletion 
-		else if (i >= 0 && c == 8){
-			i--;
+		else if (i >= 0 && c == 8){ //if backspace key is pressed...
+			i--; //...decrement i value
 			printf("\b \b");
 		}
 		
 		// Enter key pressed breaks loop
-		else if (c == 13){
-			__check = true;
+		else if (c == 13){ //13 is ascii code for return key
+			__check = true; //set boolean to true to break loop
 		}
 	}
 	printf("\n\n");
-	searchLogin();
+}//end loginSystem()
 
-}
-
-void searchLogin()
+void searchLogin(struct lNode* lHead) //search inputed value with credentials from file
 {
-	int compName, compPass;
+	int compName, compPass; //variables to compare username and password
 	int iChoice=0;
-	struct lNode *temp=(struct lNode*)malloc(sizeof(struct lNode));   
-	temp = lhead; 
+	struct lNode *temp=(struct lNode*)malloc(sizeof(struct lNode)); //new node created for search
+	temp = lHead;  //new node takes value of the head node
 	
-	while( temp!= NULL )
+	while( temp!= NULL ) //while there are still values in the file continue loop
 	{
-		compName=strcmp(temp->login.username, __username);
-		compPass=strcmp(temp->login.password, __password);
+		compName=strcmp(temp->login.username, __username); //compare username input using strcmp and store result
+		compPass=strcmp(temp->login.password, __password); //compare password input using strcmp and store result
 
-		if((compName==0)&&(compPass==0))
+		if((compName==0)&&(compPass==0)) //if both values are 0 then they are equal and correct
 		{
-			free(lhead);
-			return;
+			free(lHead); //free up the space held by login linkedlist
+			return; //return when value is found
 			
 		}//if 
-		temp = temp->next;
+		temp = temp->next; //otherwise go to the next value
 	}//while 
 	
-	printf("\nIncorrect details entered\n");
-	loginSystem();
-}
+	printf("\nIncorrect details entered\n"); //if value is not found alert the user
+	loginSystem(); //return to the login method to allow user to input details again
 
-void readInEmployees(struct node **head){
+}//end searchLogin()
 
-	struct node *temp=(struct node*)malloc(sizeof(struct node));
-	
-	if((empPtr = fopen(EMPFILE, "rb")) == NULL)
+struct node readInEmployees(struct node **head){ //read in employees from employee file
+
+	struct node *temp=(struct node*)malloc(sizeof(struct node)); 
+	int count=0;
+	temp->next=NULL;
+			
+	if((empPtr = fopen(EMPFILE, "rb")) == NULL) //if file can not be opened alert the user
 	{
 		puts("File could not be opened");
 	}
 
 	else{
 
-		char data[MAXNUM];
-		while(fgets(data, sizeof data, empPtr))
-		{
-					
-			if(sscanf(data, "%d %[^\,], %[^\,], %[^\,], %d %d %d %f %s", &temp->employee.employeeId, temp->employee.employeeName, temp->employee.employeeAddress, 
-				temp->employee.department, &temp->employee.joined.day, &temp->employee.joined.month, &temp->employee.joined.year, &temp->employee.salary, temp->employee.email))
-			{
-					temp->next=*head;
-					*head=temp;
-								
-					
-				/*printf("%d %s %s %s %d/%d/%d %.2f %s \n\n", 
-					head->employee.employeeId, head->employee.employeeName, head->employee.employeeAddress, head->employee.department, head->employee.joined.day,
-					head->employee.joined.month, head->employee.joined.year, head->employee.salary, head->employee.email); */
-			}//if
- 		}//while
-
-		fclose(empPtr);
+		char data[MAXNUM]; //char array with a max size of 80
+		while(fgets(data, sizeof data, empPtr)!=NULL){ //read in from file to char array using file pointer
+			struct node *newNode=(struct node*)malloc(sizeof(struct node)); 
+			//parse data to the format below and read into new node
+			sscanf(data, "%d %[^\,], %[^\,], %[^\,], %d %d %d %f %s", &newNode->employee.employeeId, newNode->employee.employeeName, newNode->employee.employeeAddress, 
+			newNode->employee.department, &newNode->employee.joined.day, &newNode->employee.joined.month, &newNode->employee.joined.year, &newNode->employee.salary, 
+			newNode->employee.email);
+						
+			if(count>0){ //if not the first node, set newNode next to temp
+				newNode->next=temp;
+			}
+			else{ //if first node, set newNode next to NULL
+				newNode->next=NULL;
+			}
+			temp=newNode; //temp takes the value of newNode
+			count++; //increment count
+		}
 	}
-}
+	*head=temp; //head pointer takes the value of temp
+	fclose(empPtr); //close file
+	
+}//end readInEmployees
 
 int showMenu(){
 
@@ -150,7 +160,6 @@ int showMenu(){
 	return(mChoice);
 		
 }// end showMenu - ask for user input until number 1-7 is entered
-
 
 void addEmployee(struct node** head){
 
@@ -259,4 +268,6 @@ void displayList(struct node* head){
 						temp->employee.salary, temp->employee.email); 
 		temp = temp->next; 
 	}
+	
 }
+
