@@ -161,24 +161,25 @@ int showMenu(){
 		
 }// end showMenu - ask for user input until number 1-7 is entered
 
-void addEmployee(struct node** head){
+void addEmployee(struct node** head){ //add employee to linkedlist
 
 	struct node *newEmp=(struct node*)malloc(sizeof(struct node));
 	
+	//ask user for all employee details and store in newEmp
 	printf("\nEnter Employee Number: ");
 	scanf("%d", &newEmp->employee.employeeId);
 	fflush(stdin);
 	printf("\nEnter Employee Name: ");
-	scanf("%30[^\n]s", newEmp->employee.employeeName);
+	scanf("%30[^\n]s", newEmp->employee.employeeName); //continue reading after spaces in name
 	fflush(stdin);
 	printf("\nEnter Employee Address: ");
-	scanf("%40[^\n]s", newEmp->employee.employeeAddress);
+	scanf("%40[^\n]s", newEmp->employee.employeeAddress); //continue reading after spaces in address
 	fflush(stdin);
 	printf("\nEnter Employee Department: ");
-	scanf("%15[^\n]s", newEmp->employee.department);
+	scanf("%15[^\n]s", newEmp->employee.department); //continue reading after spaces in department
 	fflush(stdin);
 	printf("\nEnter Employee Join Date (dd mm yyyy): ");
-	scanf("%d %d %d", &newEmp->employee.joined.day, &newEmp->employee.joined.month, &newEmp->employee.joined.year, 2, 2, 4);
+	scanf("%d %d %d", &newEmp->employee.joined.day, &newEmp->employee.joined.month, &newEmp->employee.joined.year, 2, 2, 4); //input will be 2 chars, 2 chars and 4 chars to be stored in date struct
 	fflush(stdin);
 	printf("\nEnter Employee Salary: ");
 	scanf("%f", &newEmp->employee.salary);
@@ -186,9 +187,10 @@ void addEmployee(struct node** head){
 	printf("\nEnter Employee email: ");
 	scanf("%20s", newEmp->employee.email);
 
-	newEmp->next=*head;
-	*head=newEmp;
+	newEmp->next=*head; //newEmp next points to head pointer
+	*head=newEmp; //newEmp is now head
 
+	//print out new employee details
 	printf("%d\n %s\n %s\n %s\n %d/%d/%d\n %.2f\n %s \n\n", 
 			newEmp->employee.employeeId, newEmp->employee.employeeName, newEmp->employee.employeeAddress, newEmp->employee.department, newEmp->employee.joined.day,
 					newEmp->employee.joined.month, newEmp->employee.joined.year, newEmp->employee.salary, newEmp->employee.email); 
@@ -200,55 +202,45 @@ void addEmployee(struct node** head){
 
 void displayEmployee(struct node *head){
 
-	char empDetails[30];
-	int empID;
-	char c;
+	char empDetails[30], choice; //employee details to be stored in array
+	int compName, empID, count=0;
 	struct node *temp=(struct node*)malloc(sizeof(struct node));
-	__check=false;
-	temp=head;
+	__check=false; //boolean check if emp has been found
+	temp=head; //temp struct takes head values
 	printf("Enter Employee ID or Name: ");
-	scanf("%30[^\n]s", empDetails);
-	c=empDetails[0];
+	scanf("%30[^\n]s", empDetails); //take in employee details from user
+	empID=atoi(empDetails); //make int value from user input to check if it is an int value
+	
+	while((temp!=NULL)&&(__check==false)) //loop while there are still nodes in the linkedlist and while the value has not been found
+	{
+		compName=strcmp(temp->employee.employeeName, empDetails); //compare employee name with details added by user
 
-	if(isdigit(c)){
-		
-		empID=(int)empDetails;
-
-		while(temp!=NULL){
-
-			if(temp->employee.employeeId==empID){
-
-				printf("%d\n %s\n %s\n %s\n %d/%d/%d\n %.2f\n %s \n\n", temp->employee.employeeId, temp->employee.employeeName, temp->employee.employeeAddress,
+		if((compName==0)||(temp->employee.employeeId==empID)){ //if string compare results in 0 or if the id in the current node is equal to user input, print out details
+			printf("%d\n %s\n %s\n %s\n %d/%d/%d\n %.2f\n %s \n\n", temp->employee.employeeId, temp->employee.employeeName, temp->employee.employeeAddress,
 					temp->employee.department, temp->employee.joined.day, temp->employee.joined.month, temp->employee.joined.year,
 						temp->employee.salary, temp->employee.email); 
-				__check=true;
-			}//nested if1
-
+				__check=true; //change boolean check to true
+		}
+		else{ //if value not found go to next value in linkedlist
 			temp=temp->next;
-		}//while1
-	}//if
-	else if((!(isdigit(c)))&&(__check==false)){
-		while(temp!=NULL){
+		}
+	}
 
-			if(temp->employee.employeeId==empDetails){
-
-				printf("%d\n %s\n %s\n %s\n %d/%d/%d\n %.2f\n %s \n\n", temp->employee.employeeId, temp->employee.employeeName, temp->employee.employeeAddress,
-					temp->employee.department, temp->employee.joined.day, temp->employee.joined.month, temp->employee.joined.year,
-						temp->employee.salary, temp->employee.email); 
-				__check=true;
-			}//nested if2
-
-			temp=temp->next;
-
-		}//while2
-	}//else if
-	else if(__check==false){
+	if(__check==false){ //if after search check is still false tell the user the employee could not be found
 
 		printf("Employee could not be found");
 	}
+	
 }//displayEmployee()
 
-void updateEmployee(){}
+void updateEmployee(struct node **head){
+
+	struct node *temp=(struct node*)malloc(sizeof(struct node));
+	temp=head;
+
+
+	
+}
 
 void deleteEmployee(){}
 

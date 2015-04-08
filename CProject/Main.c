@@ -6,7 +6,7 @@
 
 main(){
 
-	int mChoice=0; //holds user choice of menu options
+	int mChoice=0, count; //holds user choice of menu options
 	struct node *head=(struct node*)malloc(sizeof(struct node));//create head node for employees
 	head->next=NULL; //set head next to null 
 	//readInLogin(); //call login method
@@ -23,12 +23,12 @@ main(){
 			
 			case 2:
 			{
-				displayEmployee(head); //display a chosen employees details
+				displayEmployee(&head); //display a chosen employees details
 				break;
 			}//case2
 			case 3:
 			{
-				updateEmployee(); //update details for a chosen employee
+				displayEmployee(&head);
 				break;
 			}//case3
 			case 4:
