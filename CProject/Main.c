@@ -10,7 +10,7 @@ main(){
 	struct node *head=(struct node*)malloc(sizeof(struct node));//create head node for employees
 	head->next=NULL; //set head next to null 
 	//readInLogin(); //call login method
-	readInEmployees(&head); //head takes the head value from this method which reads in employees from file
+	readInEmployees(head); //head takes the head value from this method which reads in employees from file
 		
 	while(mChoice!=7){ //while choice does not equal the exit value 7
 		switch(mChoice = showMenu()) 
@@ -18,6 +18,7 @@ main(){
 			case 1: 
 			{
 				addEmployee(&head);//add an employee to the database
+				//sort(&head); //sort read in employees
 				break;
 			}//case1
 			
@@ -47,7 +48,9 @@ main(){
 			}//case4
 			case 5:
 			{
-				displayByDept(); //display all employees by their department
+				displayByDept(&head); //display all employees by their department
+				displayList(head);
+				sort(&head);
 				break;
 			}//case5
 			case 6:
@@ -63,7 +66,6 @@ main(){
 			case 8: //TEST CASE TO BE DELETED
 			{
 				displayList(head); 
-				system("pause");
 				break;
 			}
 		}//switch

@@ -6,7 +6,7 @@
 
 #define LOGFILE "login.txt"
 #define EMPFILE "employee.txt"
-#define MAXNUM 85
+#define MAXNUM 100
 
 typedef int boolean;
 #define true 1
@@ -59,13 +59,14 @@ FILE *empPtr;
 void readInLogin();
 void loginSystem();
 void searchLogin(struct lNode **lHead);
-struct node readInEmployees(struct node **head);
+struct node readInEmployees(struct node *head);
+void sort(struct node** head);
 int showMenu();
 void addEmployee(struct node **head);
 int findEmployee(struct node *head);
 void displayEmployee(struct node *head, int);
 void updateEmployee(struct node **head, int);
 void deleteEmployee(struct node **head, int);
-void displayByDept();
+void displayByDept(struct node **head);
 void employeeReport();
 void displayList(struct node *head);

@@ -1,3 +1,6 @@
 101 Steven Rogers,America Falls,Advertising, 19 08 2001 70000 captamer@work.com
 102 Tony Stark,Iron Lane,Public Relations, 19 08 2001 100000 ironknight@work.com
 103 Bruce Wayne,Gotham Towers,Security Detail, 19 08 2001 50000 batty@work.com
+104 Peter Parker,412 Central Park,Advertising, 14 05 2010 30000 spidey@work.com
+105 Lex Luthor,100 Lex Corp,Public Relations, 23 12 2004 120000 lexcorp@work.com
+106 Natasha Romanoff,1414 Moscow Drive,Security Detail, 03 02 2005 80000 blackwid@work.com
