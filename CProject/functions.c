@@ -105,7 +105,6 @@ void searchLogin(struct lNode* lHead) //search inputed value with credentials fr
 struct node readInEmployees(struct node *head){ //read in employees from employee file
 
 	struct node *temp=(struct node*)malloc(sizeof(struct node)); 
-	int count=0;
 	temp=head;
 
 	if((empPtr = fopen(EMPFILE, "rb")) == NULL) //if file can not be opened alert the user
@@ -131,7 +130,6 @@ struct node readInEmployees(struct node *head){ //read in employees from employe
 						
 			temp->next=newNode; //temp takes the value of newNode
 			temp=temp->next;
-			count++; //increment count
 		}
 	}
 	
@@ -168,7 +166,6 @@ void sort(struct node** head){
 	}
 }//sort
 
-
 int showMenu(){
 
 	int mChoice=0;
@@ -196,8 +193,12 @@ void addEmployee(struct node** head){ //add employee to linkedlist
 
 	struct node *newEmp=(struct node*)malloc(sizeof(struct node));
 	struct node *temp=(struct node*)malloc(sizeof(struct node));
+	int d,m,y;
+	int leapyr=0;
+	int valid;
+	char* search, search1;
 	temp=*head; //temp becomes head pointer
-	__check=false; //boolean check is false
+	__check=false;
 			
 	//ask for user id and check that it is not already in use
 	while(!__check){ //keep asking for id until one that is not in use is entered
@@ -227,17 +228,75 @@ void addEmployee(struct node** head){ //add employee to linkedlist
 	scanf("%40[^\n]s", newEmp->employee.employeeAddress); //continue reading after spaces in address
 	fflush(stdin);
 	printf("\nEnter Employee Department: ");
-	scanf("%15[^\n]s", newEmp->employee.department); //continue reading after spaces in department
+	scanf("%20[^\n]s", newEmp->employee.department); //continue reading after spaces in department
 	fflush(stdin);
-	printf("\nEnter Employee Join Date (dd mm yyyy): ");
-	scanf("%d %d %d", &newEmp->employee.joined.day, &newEmp->employee.joined.month, &newEmp->employee.joined.year, 2, 2, 4); //input will be 2 chars, 2 chars and 4 chars to be stored in date struct
+	while(!__check){
+		printf("\nEnter Employee Join Date (dd mm yyyy): ");
+		scanf("%d %d %d", &d, &m, &y);
+		
+		if(y % 400==0 || (y%100 !=0 && y%4==0)){
+			leapyr=1;
+		}
+		if((m==1) || (m==3) || (m==5) || (m==7) || (m==8) || (m==10) || (m==12)){
+			if(d<=31){
+				__check=true;
+				valid=0;
+			}
+			else{
+				printf("Invalid date entered");
+				break;
+			}
+		}
+		else if(m==4 || m==6 || m==9 || m==11){
+			if(d<=30){
+				__check=true;
+				valid=0;
+			}
+		}
+		else{
+			if(leapyr==1){
+				if(d<=29){
+					__check=true;
+					valid=0;
+				}
+			}
+			if(leapyr==0){
+				if(d<=28){
+					__check=true;
+					valid=0;
+				}
+			}
+		
+		}
+		
+		fflush(stdin);
+		leapyr=0;
+	}
+		
+	newEmp->employee.joined.day=d;
+	newEmp->employee.joined.month=m;
+	newEmp->employee.joined.year=y;
+	__check=false;
 	fflush(stdin);
 	printf("\nEnter Employee Salary: ");
 	scanf("%f", &newEmp->employee.salary);
-	fflush(stdin);
-	printf("\nEnter Employee email: ");
-	scanf("%20s", newEmp->employee.email);
+	
+	while(__check==false){
+		
+		fflush(stdin);
+		printf("\nEnter Employee email: ");
+		scanf("%20s", newEmp->employee.email);
 
+		search=strpbrk(newEmp->employee.email, "@");
+		search1=strstr(newEmp->employee.email, ".com");
+		if(search && search1){
+			__check=true;
+		}
+		else{
+			printf("\n\n********Invalid email entered. Please enter a valid email address********\n\n");
+		}
+
+	}
 	//if the list is empty or the head node is greater than input, set newEmp as head
 	if(temp == NULL || temp->employee.employeeId > newEmp->employee.employeeId) 
 	{
@@ -260,7 +319,7 @@ void addEmployee(struct node** head){ //add employee to linkedlist
 	printf(" ID: %d\n Name: %s\n Address: %s\n Department: %s\n Join date: %d/%d/%d\n Salary: %.2f\n Email: %s \n\n", newEmp->employee.employeeId, newEmp->employee.employeeName, newEmp->employee.employeeAddress,
 				newEmp->employee.department, newEmp->employee.joined.day, newEmp->employee.joined.month, newEmp->employee.joined.year,
 				newEmp->employee.salary, newEmp->employee.email); 
-	printf("\n\n\t\t********Employee added successfully********\n\n");
+ 	printf("\n\n\t\t********Employee added successfully********\n\n");
 
 	system("pause");
 
@@ -445,7 +504,189 @@ void displayByDept(struct node **head){
 
 }//displayByDept
 
-void employeeReport(){}
+void employeeReport(struct node *head){
+
+	struct dnode *dept=(struct dnode*)malloc(sizeof(struct dnode));
+	struct node *temp=(struct node*)malloc(sizeof(struct node));
+	struct node *check=(struct node*)malloc(sizeof(struct node));
+	int yrsEmployeed;
+	char buffer[5]; // strftime function
+	int compare, i, cmpExisting;
+	int count=1;
+	FILE *stPtr;
+	time(&curtime);
+	dept->next=NULL;
+	temp=head;
+
+	strcpy(dept->department.departName, temp->employee.department); //copy the name of the department into departmentName 
+	dept->department.numOfEmployees=1; //add  employee to department
+	dept->department.totalSalary=temp->employee.salary;//add  employee salary to totalsalary
+	info = localtime( &curtime ); //get local time
+	strftime(buffer,5,"%Y", info); //store year into buffer
+
+	if(buffer-temp->employee.joined.year<5){ //if employee has worked for less than 5 years give 3% of salary bonus
+		
+		dept->department.totalBonus=temp->employee.salary*.03;
+	}
+	else if(buffer-temp->employee.joined.year>=5 && buffer-temp->employee.joined.year<=10){ //if employed for 5+ years and less than 10 give 4% salary bonus
+
+		dept->department.totalBonus=temp->employee.salary*.04;
+	}
+	else{
+		dept->department.totalBonus=temp->employee.salary*.05; //if employed for over 10 years give 5% bonus
+	}
+	dept->department.totalOutlay=dept->department.totalBonus+dept->department.totalSalary;
+
+	check=head->next;
+
+	while(check!=NULL){
+
+			compare=strcmp(dept->department.departName, check->employee.department);
+			if(compare==0){
+				dept->department.numOfEmployees++;
+				dept->department.totalSalary+=check->employee.salary;//add  employee salary to totalsalary
+				info = localtime( &curtime ); //get local time
+				strftime(buffer,5,"%Y", info); //store year into buffer
+
+				if(buffer-check->employee.joined.year<5){ //if employee has worked for less than 5 years give 3% of salary bonus
+		
+					dept->department.totalBonus+=check->employee.salary*.03;
+				}
+				else if(buffer-check->employee.joined.year>=5 && buffer-check->employee.joined.year<=10){ //if employed for 5+ years and less than 10 give 4% salary bonus
+
+					dept->department.totalBonus+=check->employee.salary*.04;
+				}
+				else{
+					dept->department.totalBonus+=check->employee.salary*.05; //if employed for over 10 years give 5% bonus
+				}
+				dept->department.totalOutlay=dept->department.totalBonus+dept->department.totalSalary;
+			}
+			
+			check=check->next; //go to next employee
+			
+		}//inner while
+		temp=temp->next;
+
+	//subsequent read
+		while(temp!=NULL){
+
+			struct dnode *newNode=(struct dnode*)malloc(sizeof(struct dnode));
+			count++;
+			newNode->next=NULL;
+			strcpy(newNode->department.departName, temp->employee.department); //copy the name of the department into departmentName 
+			newNode->department.numOfEmployees=1; //add  employee to department
+			newNode->department.totalSalary=temp->employee.salary;//add  employee salary to totalsalary
+			info = localtime( &curtime ); //get local time
+			strftime(buffer,5,"%Y", info); //store year into buffer
+
+			if(buffer-temp->employee.joined.year<5){ //if employee has worked for less than 5 years give 3% of salary bonus
+		
+				newNode->department.totalBonus=temp->employee.salary*.03;
+			}
+			else if(buffer-temp->employee.joined.year>=5 && buffer-temp->employee.joined.year<=10){ //if employed for 5+ years and less than 10 give 4% salary bonus
+
+				newNode->department.totalBonus=temp->employee.salary*.04;
+			}
+			else{
+				newNode->department.totalBonus=temp->employee.salary*.05; //if employed for over 10 years give 5% bonus
+			}
+			newNode->department.totalOutlay=newNode->department.totalBonus+newNode->department.totalSalary;
+
+			check=head;
+
+			for(i=0; i<count;i++){//loop goes to the next node after current
+					check=check->next;
+				}
+		
+		while(check!=NULL){
+
+			compare=strcmp(newNode->department.departName, check->employee.department);
+			if(compare==0){
+				newNode->department.numOfEmployees++;
+				newNode->department.totalSalary+=check->employee.salary;//add  employee salary to totalsalary
+				info = localtime( &curtime ); //get local time
+				strftime(buffer,5,"%Y", info); //store year into buffer
+
+				if(buffer-check->employee.joined.year<5){ //if employee has worked for less than 5 years give 3% of salary bonus
+		
+					newNode->department.totalBonus+=check->employee.salary*.03;
+				}
+				else if(buffer-check->employee.joined.year>=5 && buffer-check->employee.joined.year<=10){ //if employed for 5+ years and less than 10 give 4% salary bonus
+
+					newNode->department.totalBonus+=check->employee.salary*.04;
+				}
+				else{
+					newNode->department.totalBonus+=check->employee.salary*.05; //if employed for over 10 years give 5% bonus
+				}
+				newNode->department.totalOutlay=newNode->department.totalBonus+newNode->department.totalSalary;
+			}
+			
+			check=check->next; //go to next employee
+			
+		}//inner while
+		__check=deleteDuplicates(&dept, newNode);
+		if(__check!=true){
+			newNode->next = dept->next;
+			dept->next = newNode;
+		}
+		temp=temp->next;
+	}//outer while
+	
+	if((stPtr=fopen("departments.txt", "w"))==NULL){
+		puts("Could not write to file");
+	}
+	else{
+		while(dept!=NULL){
+
+			fprintf(stPtr, " Department: %s\n No. of Employees: %d\n Total Salary: %.2f\n Total Bonus: %.2f\n Total Outlay: %.2f\n\n", dept->department.departName, dept->department.numOfEmployees, 
+				dept->department.totalSalary, dept->department.totalBonus, dept->department.totalOutlay);
+			printf(" Department: %s\n No. of Employees: %d\n Total Salary: %.2f\n Total Bonus: %.2f\n Total Outlay: %.2f\n\n", dept->department.departName, dept->department.numOfEmployees, 
+				dept->department.totalSalary, dept->department.totalBonus, dept->department.totalOutlay);
+			dept = dept->next; 
+		}
+		fclose(stPtr); //close file
+	}
+	system("pause");
+}//employeeReport
+
+boolean deleteDuplicates(struct dnode **head, struct dnode *newNode){
+
+	struct dnode *temp=*head;
+	struct dnode *newN=newNode;
+	int compare;
+	
+	while(temp!=NULL){
+		compare=strcmp(temp->department.departName, newN->department.departName);
+
+		if(compare==0){
+			return true;
+		}
+		temp=temp->next;
+	}
+
+	return;
+}
+
+void writeToFile(struct node *head){
+
+	struct node *temp=head;
+	FILE *stPtr;
+	if((stPtr=fopen("Employees.txt", "w"))==NULL){
+		puts("Could not write to file");
+	}
+	else{
+		while( temp!= NULL ){
+			fprintf(stPtr, "%d %s,%s,%s, %d %d %d %.2f %s\n", temp->employee.employeeId, temp->employee.employeeName, 
+				temp->employee.employeeAddress,	temp->employee.department, temp->employee.joined.day, temp->employee.joined.month, temp->employee.joined.year,
+				temp->employee.salary, temp->employee.email); 
+			temp = temp->next; 
+		}
+	}
+	fclose(stPtr);
+	printf("\n\n********Your changes have been saved to file********\n\n");
+	system("pause");
+
+}//writeToFile
 
 void displayList(struct node* head){
 
@@ -454,8 +695,8 @@ void displayList(struct node* head){
 	temp = head; 
 	while( temp!= NULL )
 	{
-		printf(" ID: %d\n Name: %s\n Address: %s\n Department: %s\n Join date: %d/%d/%d\n Salary: %.2f\n Email: %s \n\n", temp->employee.employeeId, temp->employee.employeeName, temp->employee.employeeAddress,
-					temp->employee.department, temp->employee.joined.day, temp->employee.joined.month, temp->employee.joined.year,
+		printf(" Department: %s\n ID: %d\n Name: %s\n Address: %s\n Join date: %d/%d/%d\n Salary: %.2f\n Email: %s \n\n", temp->employee.department, temp->employee.employeeId, 
+			temp->employee.employeeName, temp->employee.employeeAddress, temp->employee.joined.day, temp->employee.joined.month, temp->employee.joined.year,
 						temp->employee.salary, temp->employee.email); 
 		temp = temp->next; 
 	}

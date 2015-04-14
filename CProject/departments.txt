@@ -1,0 +1,18 @@
+ Department: Advertising
+ No. of Employees: 2
+ Total Salary: 100000.00
+ Total Bonus: 5000.00
+ Total Outlay: 105000.00
+
+ Department: Security Detail
+ No. of Employees: 2
+ Total Salary: 130000.00
+ Total Bonus: 6500.00
+ Total Outlay: 136500.00
+
+ Department: Public Relations
+ No. of Employees: 2
+ Total Salary: 220000.00
+ Total Bonus: 11000.00
+ Total Outlay: 231000.00
+

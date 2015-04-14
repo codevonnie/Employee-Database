@@ -18,7 +18,6 @@ main(){
 			case 1: 
 			{
 				addEmployee(&head);//add an employee to the database
-				//sort(&head); //sort read in employees
 				break;
 			}//case1
 			
@@ -55,19 +54,15 @@ main(){
 			}//case5
 			case 6:
 			{
-				employeeReport(); //displays employee report
+				employeeReport(head); //displays employee report
 				break;
 			}//case6
 			case 7:
 			{
+				writeToFile(head);
 				exit(0); //exit the program
 			}//case7
-			
-			case 8: //TEST CASE TO BE DELETED
-			{
-				displayList(head); 
-				break;
-			}
+				
 		}//switch
  	}//inner while
 	

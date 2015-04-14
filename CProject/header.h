@@ -3,9 +3,10 @@
 #include <conio.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #define LOGFILE "login.txt"
-#define EMPFILE "employee.txt"
+#define EMPFILE "Employees.txt"
 #define MAXNUM 100
 
 typedef int boolean;
@@ -32,13 +33,18 @@ typedef struct date
 	int year;
 }DATE;
 
+struct date *info;
+time_t curtime; // ctime function
+
+time_t rawtime; //gmtime function
+
 
 typedef struct employee{
 
 	int employeeId;
 	char employeeName[30];
 	char employeeAddress[40];
-	char department[15];
+	char department[20];
 	DATE joined;
 	float salary;
 	char email[20];
@@ -49,6 +55,21 @@ struct node
 {
 	EMP employee;
 	struct node *next;
+};
+
+typedef struct Department{
+	
+	char departName[20];
+	int numOfEmployees;
+	float totalSalary;
+	float totalBonus;
+	float totalOutlay;
+}DEPT;
+
+struct dnode{
+
+	DEPT department;
+	struct dnode *next;
 };
 
 char __username[15];
@@ -68,5 +89,7 @@ void displayEmployee(struct node *head, int);
 void updateEmployee(struct node **head, int);
 void deleteEmployee(struct node **head, int);
 void displayByDept(struct node **head);
-void employeeReport();
+void employeeReport(struct node *head);
+boolean deleteDuplicates(struct dnode **head, struct dnode *newNode);
+void writeToFile(struct node *head);
 void displayList(struct node *head);
