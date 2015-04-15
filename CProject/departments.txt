@@ -4,6 +4,12 @@
  Total Bonus: 5000.00
  Total Outlay: 105000.00
 
+ Department: IT
+ No. of Employees: 1
+ Total Salary: 80000.00
+ Total Bonus: 4000.00
+ Total Outlay: 84000.00
+
  Department: Security Detail
  No. of Employees: 2
  Total Salary: 130000.00

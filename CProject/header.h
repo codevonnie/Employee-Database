@@ -1,3 +1,7 @@
+/*  Yvonne Grealy
+	G00306806
+	Second Year Advanced Procedural Programming Project */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
@@ -35,9 +39,6 @@ typedef struct date
 
 struct date *info;
 time_t curtime; // ctime function
-
-time_t rawtime; //gmtime function
-
 
 typedef struct employee{
 
@@ -47,12 +48,11 @@ typedef struct employee{
 	char department[20];
 	DATE joined;
 	float salary;
-	char email[20];
+	char email[40];
 
 }EMP;
    
-struct node 
-{
+struct node{
 	EMP employee;
 	struct node *next;
 };

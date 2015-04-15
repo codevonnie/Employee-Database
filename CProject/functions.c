@@ -1,4 +1,8 @@
-#include "header.h"
+/*  Yvonne Grealy
+	G00306806
+	Second Year Advanced Procedural Programming Project */
+
+#include "header.h" //include header.h to access structs, global variables and libraries
 
 void readInLogin(){ //reads in the login credentials from the login file
 
@@ -18,6 +22,8 @@ void readInLogin(){ //reads in the login credentials from the login file
 		lHead=(struct lNode*)malloc(sizeof(struct lNode));
 		lSecond=(struct lNode*)malloc(sizeof(struct lNode));
 		lThird=(struct lNode*)malloc(sizeof(struct lNode));
+		
+		//read in login details and save to linkedlist
 		fscanf(logPtr, "%s", lHead->login.username);
 		fscanf(logPtr, "%s", lHead->login.password);
 		
@@ -30,13 +36,13 @@ void readInLogin(){ //reads in the login credentials from the login file
 		lSecond->next=lThird;
 		lThird->next=NULL;
 	}
-	fclose(logPtr);
+	fclose(logPtr); //close file pointer
 	loginSystem(); //call to loginSystem to print astericks to the screen instead of the password
 	searchLogin(lHead); //pass head node to search for the inputed credentials in the saved credentials
 
 }//readInLogin
 
-void loginSystem(){
+void loginSystem(){ //method to get username and password and print * to screen instead of passwords chars
 
 	char c=' ';
 	int counter=0, i = 0;
@@ -45,7 +51,7 @@ void loginSystem(){
 	fflush(stdin); //flush the standard input
 	printf("Enter username: "); 
 	scanf("%s", __username); //read in username from user
-	printf("**Press Esc to exit**\n");
+	printf("**Press Esc to exit**\n"); //alert the user that they can exit using Esc
 	printf("Enter password: "); 
 	//Hide password by replacing letters with *
 	while (__check == false){ //if boolean value check is false...
@@ -59,7 +65,7 @@ void loginSystem(){
 		//Ascii for all allowed charecters 
 		else if ((c > 47 && c < 58) || (c>64 && c < 123)){ //if c is a numeric char or an upper/lowercase letter...
 			__password[i] = c; //...position i of the password array is equal to c
-			i++; //i is incremented
+			i++; 
 			printf("*"); //print an asterisk
 		}
 		//Allow for character deletion 
@@ -76,10 +82,9 @@ void loginSystem(){
 	printf("\n\n");
 }//end loginSystem()
 
-void searchLogin(struct lNode* lHead) //search inputed value with credentials from file
+void searchLogin(struct lNode* lHead) //search inputed value against credentials from file
 {
 	int compName, compPass; //variables to compare username and password
-	int iChoice=0;
 	struct lNode *temp=(struct lNode*)malloc(sizeof(struct lNode)); //new node created for search
 	temp = lHead;  //new node takes value of the head node
 	
@@ -105,17 +110,18 @@ void searchLogin(struct lNode* lHead) //search inputed value with credentials fr
 struct node readInEmployees(struct node *head){ //read in employees from employee file
 
 	struct node *temp=(struct node*)malloc(sizeof(struct node)); 
-	temp=head;
+	temp=head; //temp takes value of head
 
 	if((empPtr = fopen(EMPFILE, "rb")) == NULL) //if file can not be opened alert the user
 	{
-		puts("File could not be opened");
+		puts("\n\n\t\t********Database file was not read in correctly********\n\n");
 	}
 
 	else{
 
-		char data[MAXNUM]; //char array with a max size of 80
-		(fgets(data, sizeof data, empPtr)!=NULL); //initial read from file
+		char data[MAXNUM]; //char array with max size 100
+		(fgets(data, sizeof data, empPtr)!=NULL); //initial read from file to first node
+		//parse data to the format below and read into first node
 		sscanf(data, "%d %[^\,], %[^\,], %[^\,], %d %d %d %f %s", &temp->employee.employeeId, temp->employee.employeeName, temp->employee.employeeAddress, 
 		temp->employee.department, &temp->employee.joined.day, &temp->employee.joined.month, &temp->employee.joined.year, &temp->employee.salary, 
 		temp->employee.email);
@@ -128,7 +134,7 @@ struct node readInEmployees(struct node *head){ //read in employees from employe
 			newNode->employee.department, &newNode->employee.joined.day, &newNode->employee.joined.month, &newNode->employee.joined.year, &newNode->employee.salary, 
 			newNode->employee.email);
 						
-			temp->next=newNode; //temp takes the value of newNode
+			temp->next=newNode; //temp next points to newNode
 			temp=temp->next;
 		}
 	}
@@ -138,38 +144,38 @@ struct node readInEmployees(struct node *head){ //read in employees from employe
 	
 }//end readInEmployees
 
-void sort(struct node** head){
+void sort(struct node** head){ //sorts employees from lowest ID number to highest
 
-	__check = false;
-	if (*head == NULL || (*head)->next == NULL) 
+	__check = false; 
+	if (*head == NULL || (*head)->next == NULL) //if the list is empty or there is only one entry, do not sort
 		return;
 
 	while (!__check) {
 		struct node **prev = head;// pointer to head elements
-		struct node *temp = *head;// 
-		struct node *nxt = (*head)->next;  
+		struct node *temp = *head;// temp pointer takes head pointer 
+		struct node *after = (*head)->next; //after pointer points to node after head
 
 		__check = true;
-		while (nxt) {
+		while (after) {
 
-			if (temp->employee.employeeId > nxt->employee.employeeId) {
-				temp->next = nxt->next;
-				nxt->next = temp;
-				*prev = nxt;
+			if (temp->employee.employeeId > after->employee.employeeId) { //if node 1 is greater than node 2
+				temp->next = after->next; //temp next takes value of after next
+				after->next = temp; //after next now points to temp
+				*prev = after; //previous pointer points to after value
 
 				__check = false;
 			}
-			prev = &temp->next;
-			temp = nxt;
-			nxt = nxt->next;
+			prev = &temp->next; //previous takes address of temp next
+			temp = after; //temp takes after pointer
+			after = after->next; //after points to after next node
 		}
 	}
 }//sort
 
-int showMenu(){
+int showMenu(){ //method to display user menu
 
 	int mChoice=0;
-	do
+	do //print the menu below and ask for user input until number 1-7 is entered
 	{
 		system("cls");
 		printf("\t\t\t\t******************\n\n\t\t\t\t    Employee Database\n\n\t\t\t\t******************\n\n\n");
@@ -180,23 +186,21 @@ int showMenu(){
 		printf("\n\n\t\t\t\t 5. Display all Employees by Department");
 		printf("\n\n\t\t\t\t 6. Display Employee Report");
 		printf("\n\n\t\t\t\t 7. Exit");
-		printf("\n\n\t\t\t\t 8. Display all Employees");
 		printf("\n\n\n\t Enter a valid option: ");
 		scanf("%d", &mChoice);
 		fflush(stdin);
-	}while( (mChoice < 0) || (mChoice > 8) );
-	return(mChoice);
+	}while( (mChoice < 1) || (mChoice > 7) );
+	return(mChoice); //return user choice
 		
-}// end showMenu - ask for user input until number 1-7 is entered
+}// end showMenu
 
 void addEmployee(struct node** head){ //add employee to linkedlist
 
 	struct node *newEmp=(struct node*)malloc(sizeof(struct node));
 	struct node *temp=(struct node*)malloc(sizeof(struct node));
-	int d,m,y;
-	int leapyr=0;
-	int valid;
-	char* search, search1;
+	int d,m,y; //values to read in date
+	int leapyr=0; //leapyear value
+	char* search, search1; //pointers for email validation
 	temp=*head; //temp becomes head pointer
 	__check=false;
 			
@@ -207,17 +211,15 @@ void addEmployee(struct node** head){ //add employee to linkedlist
 		printf("\nEnter Employee Number: ");
 		scanf("%d", &newEmp->employee.employeeId); //read in id
 		fflush(stdin);
-
 		while(checkID!=NULL){ //go through each node in the list
 			if(checkID->employee.employeeId==newEmp->employee.employeeId){ //if stored employee id equals inputted id, alert user
 				printf("\n\n\t\t********Sorry that employee ID is already in use********\n\n");
-				__check=false;
-				break; //if number is found break loop so user can input new id
+				__check=false; //loop will be repeated
 			}
 			else{
 				__check=true; //if id is not found, set to true to break loop
 			}
-			checkID=checkID->next;
+			checkID=checkID->next; //check next node in linkedlist
 		}
 	}
 	__check=false; //reset to false
@@ -232,72 +234,81 @@ void addEmployee(struct node** head){ //add employee to linkedlist
 	fflush(stdin);
 	while(!__check){
 		printf("\nEnter Employee Join Date (dd mm yyyy): ");
-		scanf("%d %d %d", &d, &m, &y);
+		scanf("%d %d %d", &d, &m, &y); //read in day, month and year
 		
-		if(y % 400==0 || (y%100 !=0 && y%4==0)){
+		if(y % 400==0 || (y%100 !=0 && y%4==0)){ //if either condition is true, set leapyear
 			leapyr=1;
 		}
-		if((m==1) || (m==3) || (m==5) || (m==7) || (m==8) || (m==10) || (m==12)){
-			if(d<=31){
-				__check=true;
-				valid=0;
+		if(y>1970){ //only enter loop if year is greater than given year
+			
+			if((m==1) || (m==3) || (m==5) || (m==7) || (m==8) || (m==10) || (m==12)){ //if month is equal to any value here, days should be 31 days or less
+				if(d<=31){
+					__check=true;
+				}
+				else{
+					printf("\n\n\t\t********Invalid date entered********\n\n");
+				}
 			}
+			else if(m==4 || m==6 || m==9 || m==11){ //if month is equal to any value here, days should be 30 days or less
+				if(d<=30){
+					__check=true;
+				}
+				else{
+					printf("\n\n\t\t********Invalid date entered********\n\n");
+				}
+			}
+			else if(m<0 || m>12){
+				__check=false;
+				printf("\n\n\t\t********Invalid date entered********\n\n");
+			}
+		
 			else{
-				printf("Invalid date entered");
-				break;
-			}
-		}
-		else if(m==4 || m==6 || m==9 || m==11){
-			if(d<=30){
-				__check=true;
-				valid=0;
+				if(leapyr==1){ //if leapyear is set, days can be 29 days or less
+					if(d<=29){
+						__check=true;
+					}
+				}
+				else if(leapyr==0){ //if leapyear is not set, days can be 28 days or less
+					if(d<=28){
+						__check=true;
+					}
+				}
+		
 			}
 		}
 		else{
-			if(leapyr==1){
-				if(d<=29){
-					__check=true;
-					valid=0;
-				}
-			}
-			if(leapyr==0){
-				if(d<=28){
-					__check=true;
-					valid=0;
-				}
-			}
-		
+			printf("\n\n\t\t********Invalid date entered********\n\n");
 		}
-		
 		fflush(stdin);
-		leapyr=0;
+		leapyr=0; //reset leapyear
 	}
-		
-	newEmp->employee.joined.day=d;
+	//once date is validated it can be added to newEmp node
+	newEmp->employee.joined.day=d; 
 	newEmp->employee.joined.month=m;
 	newEmp->employee.joined.year=y;
-	__check=false;
+
+	__check=false; //reset to false
 	fflush(stdin);
 	printf("\nEnter Employee Salary: ");
-	scanf("%f", &newEmp->employee.salary);
+	scanf("%f", &newEmp->employee.salary); //read in salary
 	
-	while(__check==false){
+	while(__check==false){ //check for valid email address
 		
 		fflush(stdin);
 		printf("\nEnter Employee email: ");
-		scanf("%20s", newEmp->employee.email);
+		scanf("%40s", newEmp->employee.email); //read in email address
 
-		search=strpbrk(newEmp->employee.email, "@");
-		search1=strstr(newEmp->employee.email, ".com");
-		if(search && search1){
+		search=strpbrk(newEmp->employee.email, "@"); //if email address does not contain @ symbol, search will be null
+		search1=strstr(newEmp->employee.email, ".com"); //if email address does not contain ".com" string, search1 will be null
+		if(search && search1){ //while search and search1 are not null allow loop to break
 			__check=true;
 		}
 		else{
-			printf("\n\n********Invalid email entered. Please enter a valid email address********\n\n");
+			printf("\n\n********Invalid email entered. Please enter a valid email address********\n\n");//else alert user and retry
 		}
 
 	}
-	//if the list is empty or the head node is greater than input, set newEmp as head
+	//if the list is empty or the head node ID is greater than input, set newEmp as head
 	if(temp == NULL || temp->employee.employeeId > newEmp->employee.employeeId) 
 	{
 		newEmp->next=temp;
@@ -323,12 +334,11 @@ void addEmployee(struct node** head){ //add employee to linkedlist
 
 	system("pause");
 
-
 }//end addEmployee()
 
-int findEmployee(struct node *head){
+int findEmployee(struct node *head){ //method to check if employee exists for use with displaying, updating and deleting employees methods
 
-	char empDetails[30], choice; //employee details to be stored in array
+	char empDetails[30], choice; //employee details (name or id) to be stored in array
 	int compName, empID, count=0;
 	struct node *temp=(struct node*)malloc(sizeof(struct node));
 	__check=false; //boolean check if emp has been found
@@ -341,7 +351,7 @@ int findEmployee(struct node *head){
 	{
 		compName=strcmp(temp->employee.employeeName, empDetails); //compare employee name with details added by user
 
-		if((compName==0)||(temp->employee.employeeId==empID)){ //if string compare results in 0 or if the id in the current node is equal to user input, print out details
+		if((compName==0)||(temp->employee.employeeId==empID)){ //if string compare results is 0 or if the id in the current node is equal to user input, return count to caller
 			
 				__check=true; //change boolean check to true
 				return count;
@@ -349,16 +359,16 @@ int findEmployee(struct node *head){
 		else{ //if value not found go to next value in linkedlist
 			temp=temp->next;
 		}
-		count++;
+		count++; //increment count (used to get to correct node later)
 	}
 
 	if(!__check){ //if after search check is still false tell the user the employee could not be found
 
 		printf("\n\n\t\t********Employee could not be found********\n\n");
-		count=-1;
+		count=-1; //next method will only use count if it is 0 or greater
 	}
 	system("pause");
-	return count;
+	return count; //return dud value to caller
 	
 }//findEmployee()
 
@@ -509,15 +519,16 @@ void employeeReport(struct node *head){
 	struct dnode *dept=(struct dnode*)malloc(sizeof(struct dnode));
 	struct node *temp=(struct node*)malloc(sizeof(struct node));
 	struct node *check=(struct node*)malloc(sizeof(struct node));
-	int yrsEmployeed;
-	char buffer[5]; // strftime function
+	int yrsEmployeed; // to store years employeed
+	char buffer[5]; // strftime function - buffer to hold year
 	int compare, i, cmpExisting;
 	int count=1;
-	FILE *stPtr;
-	time(&curtime);
+	FILE *stPtr; // file pointer
+	time(&curtime); //current time
 	dept->next=NULL;
 	temp=head;
 
+	//inital read
 	strcpy(dept->department.departName, temp->employee.department); //copy the name of the department into departmentName 
 	dept->department.numOfEmployees=1; //add  employee to department
 	dept->department.totalSalary=temp->employee.salary;//add  employee salary to totalsalary
@@ -537,29 +548,29 @@ void employeeReport(struct node *head){
 	}
 	dept->department.totalOutlay=dept->department.totalBonus+dept->department.totalSalary;
 
-	check=head->next;
+	check=head->next; //check is equal to head next so not to compare with self
 
 	while(check!=NULL){
 
-			compare=strcmp(dept->department.departName, check->employee.department);
-			if(compare==0){
-				dept->department.numOfEmployees++;
-				dept->department.totalSalary+=check->employee.salary;//add  employee salary to totalsalary
+			compare=strcmp(dept->department.departName, check->employee.department); //compare current department name with check department name
+			if(compare==0){ //if they are equal add details to dept node
+				dept->department.numOfEmployees++; //increment number of employees
+				dept->department.totalSalary+=check->employee.salary;//add employee salary to totalsalary
 				info = localtime( &curtime ); //get local time
 				strftime(buffer,5,"%Y", info); //store year into buffer
 
 				if(buffer-check->employee.joined.year<5){ //if employee has worked for less than 5 years give 3% of salary bonus
 		
-					dept->department.totalBonus+=check->employee.salary*.03;
+					dept->department.totalBonus+=check->employee.salary*.03; //add to current total
 				}
 				else if(buffer-check->employee.joined.year>=5 && buffer-check->employee.joined.year<=10){ //if employed for 5+ years and less than 10 give 4% salary bonus
 
-					dept->department.totalBonus+=check->employee.salary*.04;
+					dept->department.totalBonus+=check->employee.salary*.04;//add to current total
 				}
 				else{
 					dept->department.totalBonus+=check->employee.salary*.05; //if employed for over 10 years give 5% bonus
 				}
-				dept->department.totalOutlay=dept->department.totalBonus+dept->department.totalSalary;
+				dept->department.totalOutlay=dept->department.totalBonus+dept->department.totalSalary; //total outlay is equal to totalBonus and totalSalary
 			}
 			
 			check=check->next; //go to next employee
@@ -567,8 +578,8 @@ void employeeReport(struct node *head){
 		}//inner while
 		temp=temp->next;
 
-	//subsequent read
-		while(temp!=NULL){
+	//subsequent read for all other employees
+		while(temp!=NULL){ 
 
 			struct dnode *newNode=(struct dnode*)malloc(sizeof(struct dnode));
 			count++;
@@ -609,34 +620,34 @@ void employeeReport(struct node *head){
 
 				if(buffer-check->employee.joined.year<5){ //if employee has worked for less than 5 years give 3% of salary bonus
 		
-					newNode->department.totalBonus+=check->employee.salary*.03;
+					newNode->department.totalBonus+=check->employee.salary*.03;//add to current total
 				}
 				else if(buffer-check->employee.joined.year>=5 && buffer-check->employee.joined.year<=10){ //if employed for 5+ years and less than 10 give 4% salary bonus
 
-					newNode->department.totalBonus+=check->employee.salary*.04;
+					newNode->department.totalBonus+=check->employee.salary*.04;//add to current total
 				}
 				else{
 					newNode->department.totalBonus+=check->employee.salary*.05; //if employed for over 10 years give 5% bonus
 				}
-				newNode->department.totalOutlay=newNode->department.totalBonus+newNode->department.totalSalary;
+				newNode->department.totalOutlay=newNode->department.totalBonus+newNode->department.totalSalary;//total outlay is equal to totalBonus and totalSalary
 			}
 			
 			check=check->next; //go to next employee
 			
 		}//inner while
-		__check=deleteDuplicates(&dept, newNode);
-		if(__check!=true){
+		__check=deleteDuplicates(&dept, newNode); //call method to check there are no duplicate department nodes and pass dept list and newNode
+		if(__check!=true){ //if method returns false then node is added to linked list or if true node is not added to linked list
 			newNode->next = dept->next;
 			dept->next = newNode;
 		}
-		temp=temp->next;
+		temp=temp->next;  //go to next employee
 	}//outer while
 	
-	if((stPtr=fopen("departments.txt", "w"))==NULL){
-		puts("Could not write to file");
+	if((stPtr=fopen("departments.txt", "w"))==NULL){ //try to open file and alert user if it can't be
+		puts("\n\n\t\t********Could not write to file********\n\n");
 	}
-	else{
-		while(dept!=NULL){
+	else{//if file can be opened
+		while(dept!=NULL){ // write all nodes in linked list
 
 			fprintf(stPtr, " Department: %s\n No. of Employees: %d\n Total Salary: %.2f\n Total Bonus: %.2f\n Total Outlay: %.2f\n\n", dept->department.departName, dept->department.numOfEmployees, 
 				dept->department.totalSalary, dept->department.totalBonus, dept->department.totalOutlay);
@@ -649,16 +660,16 @@ void employeeReport(struct node *head){
 	system("pause");
 }//employeeReport
 
-boolean deleteDuplicates(struct dnode **head, struct dnode *newNode){
+boolean deleteDuplicates(struct dnode **head, struct dnode *newNode){ //method to check for duplicates in department report list
 
 	struct dnode *temp=*head;
 	struct dnode *newN=newNode;
 	int compare;
 	
-	while(temp!=NULL){
-		compare=strcmp(temp->department.departName, newN->department.departName);
+	while(temp!=NULL){ //check all nodes in dept linked list
+		compare=strcmp(temp->department.departName, newN->department.departName); //compare existing dept list names with newNode name
 
-		if(compare==0){
+		if(compare==0){ //if they are equal return true and newNode will not be added to dept linked list
 			return true;
 		}
 		temp=temp->next;
@@ -667,34 +678,33 @@ boolean deleteDuplicates(struct dnode **head, struct dnode *newNode){
 	return;
 }
 
-void writeToFile(struct node *head){
+void writeToFile(struct node *head){ //method to write employee linked list to file
 
 	struct node *temp=head;
-	FILE *stPtr;
+	FILE *stPtr; //file pointer
 	if((stPtr=fopen("Employees.txt", "w"))==NULL){
-		puts("Could not write to file");
+		puts("\n\n\t\t********Could not write to file********\n\n"); //if file can't be opened alert user
 	}
 	else{
-		while( temp!= NULL ){
+		while( temp!= NULL ){ //print each node in linked list
 			fprintf(stPtr, "%d %s,%s,%s, %d %d %d %.2f %s\n", temp->employee.employeeId, temp->employee.employeeName, 
 				temp->employee.employeeAddress,	temp->employee.department, temp->employee.joined.day, temp->employee.joined.month, temp->employee.joined.year,
 				temp->employee.salary, temp->employee.email); 
 			temp = temp->next; 
 		}
 	}
-	fclose(stPtr);
-	printf("\n\n********Your changes have been saved to file********\n\n");
+	fclose(stPtr); //close file pointer
+	printf("\n\n********Your changes have been saved to file********\n\n");//tell user file has been written successfully
 	system("pause");
 
 }//writeToFile
 
-void displayList(struct node* head){
+void displayList(struct node* head){ //method to employee details
 
 	struct node *temp; 
 	temp =(struct node*)malloc(sizeof(struct node)); 
 	temp = head; 
-	while( temp!= NULL )
-	{
+	while( temp!= NULL ){//loop for each node of linked list
 		printf(" Department: %s\n ID: %d\n Name: %s\n Address: %s\n Join date: %d/%d/%d\n Salary: %.2f\n Email: %s \n\n", temp->employee.department, temp->employee.employeeId, 
 			temp->employee.employeeName, temp->employee.employeeAddress, temp->employee.joined.day, temp->employee.joined.month, temp->employee.joined.year,
 						temp->employee.salary, temp->employee.email); 
